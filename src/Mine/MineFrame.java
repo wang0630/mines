@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.HashMap;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 import java.util.Stack;
@@ -26,6 +27,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButtonMenuItem;
 
 import CustomGameListener.CustomGameListener;
+import Level.*;
 import Save.*;
 
 public class  MineFrame
@@ -67,7 +69,9 @@ public class  MineFrame
     private JRadioButtonMenuItem beginnerItem, intermediateItem, expertItem,
             customItem;
 
-    //Constructor of the Mine.MineFrame
+    // The map for mapping e.getActionCommand() to according level
+    private HashMap<String, Level> difficultyMap = new HashMap<String, Level>();
+
     public MineFrame()
     {
         frame = new JFrame();//Create the frame for the GUI
@@ -76,13 +80,17 @@ public class  MineFrame
         frame.setTitle("Minesweeper");//Title of the frame
         frame.setResizable(false);//Have the frame re-sizable useful for custom games
         frame.setJMenuBar(buildMenuBar());//Build the menu bar and set it as the JMenuBar
-        
+
         statusbar = new JLabel("");//Set the passed-in status bar
         gamePanel = new JPanel(new BorderLayout());//New panel that contains the board
         frame.add(gamePanel);//Add gamePanel to the frame
         //frame.setLocationRelativeTo(null);//Centre the frame
         startNewGame();
         frame.setVisible(true);//Show all components on the window
+
+        difficultyMap.put("Beginner", new Beginner());
+        difficultyMap.put("Intermediate", new Intermediate());
+        difficultyMap.put("Expert", new Expert());
     }
 
     //Method to start/restart the game when a game has been lost, restarted or loaded
@@ -300,42 +308,9 @@ public class  MineFrame
     //Class to handle the game difficulty changes
     private class DifficultyListener implements ActionListener
     {
-        
-        //Beginner Difficulty
         public void actionPerformed(ActionEvent e)
         {
-            System.out.println(e.paramString());
-            if (beginnerItem.isSelected())
-            {
-                Board.setDifficulty(0);
-                setNoOfMines(20);
-                setNoOfRows(15);
-                setNoOfCols(15);
-                calcDimentions();
-                startNewGame();
-            }
-
-            //Intermediate Difficulty
-            else if (intermediateItem.isSelected())
-            {
-                Board.setDifficulty(1);
-                setNoOfMines(80);
-                setNoOfRows(24);
-                setNoOfCols(24);
-                calcDimentions();
-                startNewGame();
-            }
-
-            //Expert Difficulty
-            else if (expertItem.isSelected())
-            {
-                Board.setDifficulty(2);
-                setNoOfMines(200);
-                setNoOfRows(30);
-                setNoOfCols(30);
-                calcDimentions();
-                startNewGame();
-            }
+            difficultyMap.get(e.getActionCommand()).runLevel();
         }
     }
     
