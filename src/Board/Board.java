@@ -1,3 +1,5 @@
+package Board;
+
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.MouseAdapter;
@@ -7,6 +9,9 @@ import java.util.Random;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+
+import Mine.MineFrame;
+import Save.*;
 
 public class Board extends JPanel
 {
@@ -35,7 +40,7 @@ public class Board extends JPanel
     private int all_cells;
     private JLabel statusbar;
 
-    private String mineStr = "Mines left: ";
+    private String mineStr = "Mine.Mines left: ";
 
     private static int difficulty;
     private static boolean solved = false;
@@ -43,7 +48,7 @@ public class Board extends JPanel
     //Constructor
     public Board(JLabel statusbar, int noOfMines, int noOfRows, int noOfCols)
     {
-        //Set the values of the member variables as determined by the MineFrame class
+        //Set the values of the member variables as determined by the Mine.MineFrame class
         this.statusbar = statusbar;
         mines = noOfMines;
         rows = noOfRows;
@@ -55,7 +60,7 @@ public class Board extends JPanel
         //Load images into img
         for (int i = 0; i < NUM_IMAGES; i++)
         {
-            img[i] = (new ImageIcon(this.getClass().getResource((i) + ".png"))).getImage();
+            img[i] = (new ImageIcon(this.getClass().getResource("/" + (i) + ".png"))).getImage();
         }
 
         setDoubleBuffered(true);

@@ -1,4 +1,4 @@
-Specification-Title: Mines
-Application-Name: Mines
-Main-Class: Mines
+Specification-Title: Mine.Mines
+Application-Name: Mine.Mines
+Main-Class: Mine.Mines
 Sealed: true

@@ -1,3 +1,8 @@
+package CustomGameListener;
+
+import Board.Board;
+import Mine.MineFrame;
+
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -50,9 +55,9 @@ public class CustomGameListener implements ActionListener
             cancelBtn = new JButton("Cancel");
 
             //Create Labels
-            noOfMinesLabel = new JLabel("Number of Mines:");
-            boardWidthLabel = new JLabel("Board Width:");
-            boardHeightLabel = new JLabel("Board Height:");
+            noOfMinesLabel = new JLabel("Number of Mine.Mines:");
+            boardWidthLabel = new JLabel("Board.Board Width:");
+            boardHeightLabel = new JLabel("Board.Board Height:");
 
             //Create Sliders
             noOfMines = new JSlider();
@@ -164,7 +169,7 @@ public class CustomGameListener implements ActionListener
         {
             if (minesCount > width * height)
             {
-                JOptionPane.showMessageDialog(null, "You selected more Mines that can fit on the Board!");//Show a message if the user has chosen more mines that can fit on the board
+                JOptionPane.showMessageDialog(null, "You selected more Mine.Mines that can fit on the Board.Board!");//Show a message if the user has chosen more mines that can fit on the board
             }
             else
             {

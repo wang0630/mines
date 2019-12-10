@@ -1,3 +1,7 @@
+package Mine;
+
+import Board.Board;
+
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
@@ -20,6 +24,9 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButtonMenuItem;
+
+import CustomGameListener.CustomGameListener;
+import Save.*;
 
 public class  MineFrame
 {
@@ -60,7 +67,7 @@ public class  MineFrame
     private JRadioButtonMenuItem beginnerItem, intermediateItem, expertItem,
             customItem;
 
-    //Constructor of the MineFrame
+    //Constructor of the Mine.MineFrame
     public MineFrame()
     {
         frame = new JFrame();//Create the frame for the GUI
@@ -90,9 +97,9 @@ public class  MineFrame
         playingGame = true;//Set to true so the user may make actions
         startTime = System.currentTimeMillis(); //save the time the game started
 
-        //new SaveToDisk();//Save the generated board to disk 
-        //Arrays.fill(Board.getField(), 0);//Set all entries in the field to 0 to prove that LoadFromDisk does work
-        //new LoadFromDisk();//Load the board from disk
+        //new Save.SaveToDisk();//Save the generated board to disk
+        //Arrays.fill(Board.Board.getField(), 0);//Set all entries in the field to 0 to prove that Save.LoadFromDisk does work
+        //new Save.LoadFromDisk();//Load the board from disk
         
         calcDimentions();
         gamePanel.setPreferredSize(new Dimension(width, height));
@@ -105,7 +112,7 @@ public class  MineFrame
         frame.pack();
     }
 
-    //Method to create the MenuBar, its properties and associate ActionListners
+    //Method to create the MenuBar, its properties and associate Action Listners
     private JMenuBar buildMenuBar()
     {
         //Create the fileMenu and it's items
@@ -297,6 +304,7 @@ public class  MineFrame
         //Beginner Difficulty
         public void actionPerformed(ActionEvent e)
         {
+            System.out.println(e.paramString());
             if (beginnerItem.isSelected())
             {
                 Board.setDifficulty(0);

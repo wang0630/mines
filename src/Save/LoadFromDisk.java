@@ -1,3 +1,7 @@
+package Save;
+
+import Board.Board;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -37,7 +41,7 @@ public class LoadFromDisk
             }
             inFile.close();//Close the scanner
 
-            Board.setField(arr);//Have Board.field[] overwritten by arr
+            Board.setField(arr);//Have Board.Board.field[] overwritten by arr
         }
         catch (FileNotFoundException ex)
         {

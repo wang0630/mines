@@ -1,3 +1,7 @@
+package Save;
+
+import Board.Board;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -7,7 +11,7 @@ public class SaveToDisk
 {
     private String filename = "newgame.txt";//store the filename
     private PrintWriter outFile = null;//Create a PrintWriter but set to null for assigning later
-    private int[] arr = Board.getField();//Create an int array and have it the same as Board.field[]
+    private int[] arr = Board.getField();//Create an int array and have it the same as Board.Board.field[]
 
     public SaveToDisk()
     {
