@@ -2,17 +2,12 @@ package Mine;
 
 import Board.Board;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.HashMap;
-import java.util.InputMismatchException;
-import java.util.Scanner;
-import java.util.Stack;
+import java.util.*;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBoxMenuItem;
@@ -28,6 +23,7 @@ import javax.swing.JRadioButtonMenuItem;
 
 import CustomGameListener.CustomGameListener;
 import Level.*;
+import Mine.ItemFactory.ItemFactory;
 import Save.*;
 
 public class  MineFrame
@@ -64,8 +60,13 @@ public class  MineFrame
     private JMenuBar menuBar = new JMenuBar();
     private JMenu fileMenu, editMenu, viewMenu, helpMenu;
     private static JMenuItem pauseItem;
-    private JMenuItem saveItem, loadItem, exitItem, newGameItem, resolveItem,
-            undoItem, redoItem, highscore;
+    // Array to hold different items for different menus
+    private ArrayList<JMenuItem> fileItems = new ArrayList<JMenuItem>();
+    private ArrayList<JMenuItem> editItems = new ArrayList<JMenuItem>();
+    private ArrayList<JMenuItem> viewItems = new ArrayList<JMenuItem>();
+
+    private JMenuItem newGameItem, resolveItem,
+            undoItem, redoItem;
     private JRadioButtonMenuItem beginnerItem, intermediateItem, expertItem,
             customItem;
 
@@ -123,28 +124,18 @@ public class  MineFrame
     //Method to create the MenuBar, its properties and associate Action Listners
     private JMenuBar buildMenuBar()
     {
-        //Create the fileMenu and it's items
-        fileMenu = new JMenu("File");
-        fileMenu.setMnemonic('F');
-        saveItem = new JMenuItem("Save");
-        saveItem.setMnemonic('S');
-        saveItem.addActionListener(new SaveListener());
-        loadItem = new JMenuItem("Load");
-        loadItem.setMnemonic('L');
-        loadItem.addActionListener(new LoadListener());
-        highscore = new JMenuItem("Highscore");
-        highscore.setMnemonic('H');
-        highscore.addActionListener(new HighscoreListener());
-        exitItem = new JMenuItem("Exit");
-        exitItem.setMnemonic('X');
-        exitItem.addActionListener(new ExitListener());
+        ItemFactory itemFactory = new ItemFactory();
+        // Create the fileMenu and it's items
+        fileMenu = (JMenu) itemFactory.createItem(JMenu.class, "File", 'F');
+        // Push items to the array
+        fileItems.add(itemFactory.createItem(JMenuItem.class, "Save", 'S', new SaveListener()));
+        fileItems.add(itemFactory.createItem(JMenuItem.class, "Load", 'L', new LoadListener()));
+        fileItems.add(null);
+        fileItems.add(itemFactory.createItem(JMenuItem.class, "HighScore", 'H', new HighscoreListener()));
+        fileItems.add(itemFactory.createItem(JMenuItem.class, "Exit", 'X', new ExitListener()));
 
-        //Add file items to the fileMenu
-        fileMenu.add(saveItem);
-        fileMenu.add(loadItem);
-        fileMenu.addSeparator();
-        fileMenu.add(highscore);
-        fileMenu.add(exitItem);
+        // Add file items to the fileMenu
+        itemFactory.addItems(fileMenu, fileItems);
 
         //Create the editMenu and it's items
         editMenu = new JMenu("Edit");
@@ -171,21 +162,10 @@ public class  MineFrame
         newGameItem.addActionListener(new newGameListener());
 
         //Create difficulty radio buttons
-        beginnerItem = new JRadioButtonMenuItem("Beginner");
-        beginnerItem.setMnemonic('B');
-        beginnerItem.addActionListener(new DifficultyListener());
-
-        intermediateItem = new JRadioButtonMenuItem("Intermediate", true);
-        intermediateItem.setMnemonic('I');
-        intermediateItem.addActionListener(new DifficultyListener());
-
-        expertItem = new JRadioButtonMenuItem("Expert");
-        expertItem.setMnemonic('E');
-        expertItem.addActionListener(new DifficultyListener());
-
-        customItem = new JRadioButtonMenuItem("Custom...");
-        customItem.setMnemonic('C');
-        customItem.addActionListener(new CustomGameListener());
+        beginnerItem = createRadioButtonItem("Beginner", 'B', new DifficultyListener());
+        intermediateItem = createRadioButtonItem("Intermediate", 'I', new DifficultyListener());
+        expertItem = createRadioButtonItem("Expert", 'E', new DifficultyListener());
+        customItem = createRadioButtonItem("Custom...", 'C', new CustomGameListener());
 
         //Create a button group and add the difficulty items to it
         ButtonGroup difficultyGroup = new ButtonGroup();
@@ -224,7 +204,13 @@ public class  MineFrame
         return menuBar;
     }
 
-    //Accessors and mutators
+    // JRadioButton Item creator
+    private JRadioButtonMenuItem createRadioButtonItem(String title, char mnemonics, ActionListener l) {
+        JRadioButtonMenuItem item = new JRadioButtonMenuItem(title);
+        item.setMnemonic(mnemonics);
+        item.addActionListener(l);
+        return item;
+    }
 
     //Accessor for the number of mines
     public static int getNoOfMines()
@@ -300,10 +286,12 @@ public class  MineFrame
         return getCurrentTime() - pauseTime;
     }
     
-    public static void calcDimentions(){
+    public static void calcDimentions() {
     	width = noOfCols*15;
     	height = noOfRows*15+20;
     }
+
+    /******** Listeners **********/
 
     //Class to handle the game difficulty changes
     private class DifficultyListener implements ActionListener
@@ -461,16 +449,8 @@ public class  MineFrame
     {
         public void actionPerformed(ActionEvent e)
         {
-            if (pauseItem.isSelected())
-            {
-                timePause();//save current time
-                playingGame = false;//Stop the user making actions
-            }
-            if (!pauseItem.isSelected())
-            {
-                timePause();//calculate time the game was paused for
-                playingGame = true;//Allow the user to continue the game
-            }
+            timePause();
+            playingGame = pauseItem.isSelected() ? false : true;
         }
     }
     public class ExitListener implements ActionListener {
