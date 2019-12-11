@@ -11,7 +11,6 @@ private class DifficultyListener implements ActionListener
         //Beginner Difficulty
         public void actionPerformed(ActionEvent e)
         {
-            System.out.println(e.paramString());
             if (beginnerItem.isSelected())
             {
                 Board.setDifficulty(0);
@@ -70,3 +69,24 @@ public abstract class Level {
     }
 }
 ```
+
+### 12/12: Make a factory class for all ui components
+Original way tp create JMenuItem
+```java
+editMenu = new JMenu("Edit");
+editMenu.setMnemonic('d');
+undoItem = new JMenuItem("Undo");
+undoItem.setMnemonic('Z');
+undoItem.addActionListener(new UndoListener());
+redoItem = new JMenuItem("Redo");
+redoItem.setMnemonic('Y');
+redoItem.addActionListener(new RedoListener());
+```
+There are lots of duplicate code
+#### Solution:
+Make `ItemFactory` in order to reduce duplicate code
+Inside `ItemFactory.createItem()`, there are a couple of things worth mentioning:
+1. The first parameter is `Class`, which is the class of the UI which we want to create
+2. `Class.getConstructor(String.class)` is used to fetch the constructor which accepts a string as argument
+3. We use the constructor to create the UI and upcast the type into `JMenuItem`, since we know `JMenu`, `JMenuItem` and `JRadioButtonMenuItem` are all sub classes of `JMenuItem`
+4. After setting the title, mnemonic and listener(if any), we return it
