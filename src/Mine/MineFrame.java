@@ -64,11 +64,8 @@ public class  MineFrame
     private ArrayList<JMenuItem> fileItems = new ArrayList<JMenuItem>();
     private ArrayList<JMenuItem> editItems = new ArrayList<JMenuItem>();
     private ArrayList<JMenuItem> viewItems = new ArrayList<JMenuItem>();
-
-    private JMenuItem newGameItem, resolveItem,
-            undoItem, redoItem;
-    private JRadioButtonMenuItem beginnerItem, intermediateItem, expertItem,
-            customItem;
+    private ArrayList<JMenuItem> diffItems = new ArrayList<JMenuItem>();
+    private ArrayList<JMenuItem> helpItems = new ArrayList<JMenuItem>();
 
     // The map for mapping e.getActionCommand() to according level
     private HashMap<String, Level> difficultyMap = new HashMap<String, Level>();
@@ -125,6 +122,7 @@ public class  MineFrame
     private JMenuBar buildMenuBar()
     {
         ItemFactory itemFactory = new ItemFactory();
+
         // Create the fileMenu and it's items
         fileMenu = (JMenu) itemFactory.createItem(JMenu.class, "File", 'F');
         // Push items to the array
@@ -138,61 +136,43 @@ public class  MineFrame
         itemFactory.addItems(fileMenu, fileItems);
 
         //Create the editMenu and it's items
-        editMenu = new JMenu("Edit");
-        editMenu.setMnemonic('d');
-        undoItem = new JMenuItem("Undo");
-        undoItem.setMnemonic('Z');
-        undoItem.addActionListener(new UndoListener());
-        redoItem = new JMenuItem("Redo");
-        redoItem.setMnemonic('Y');
-        redoItem.addActionListener(new RedoListener());
+        editMenu = (JMenu) itemFactory.createItem(JMenu.class, "Edit", 'd');
+        editItems.add(itemFactory.createItem(JMenuItem.class, "Undo", 'Z', new UndoListener()));
+        editItems.add(itemFactory.createItem(JMenuItem.class, "Redo", 'Y', new RedoListener()));
 
-        //Add edit items to the editMenu
-        editMenu.add(undoItem);
-        editMenu.add(redoItem);
+        // Add edit items to the editMenu
+        itemFactory.addItems(editMenu, editItems);
 
-        //Create the viewMenu and it's items
-        viewMenu = new JMenu("Game");
-        viewMenu.setMnemonic('G');
-        pauseItem = new JCheckBoxMenuItem("Pause");
-        pauseItem.setMnemonic('P');
-        pauseItem.addActionListener(new PauseListener());
-        newGameItem = new JMenuItem("New Game");
-        newGameItem.setMnemonic('N');
-        newGameItem.addActionListener(new newGameListener());
+        // Create the viewMenu and it's items
+        viewMenu = (JMenu) itemFactory.createItem(JMenu.class, "Game", 'G');
+        pauseItem = itemFactory.createItem(JMenuItem.class, "Pause", 'P', new PauseListener());
+        viewItems.add(pauseItem);
+        viewItems.add(itemFactory.createItem(JMenuItem.class, "New Game", 'N', new NewGameListener()));
 
-        //Create difficulty radio buttons
-        beginnerItem = createRadioButtonItem("Beginner", 'B', new DifficultyListener());
-        intermediateItem = createRadioButtonItem("Intermediate", 'I', new DifficultyListener());
-        expertItem = createRadioButtonItem("Expert", 'E', new DifficultyListener());
-        customItem = createRadioButtonItem("Custom...", 'C', new CustomGameListener());
+        // Create difficulty radio buttons
+        diffItems.add(itemFactory.createItem(JRadioButtonMenuItem.class, "Beginner", 'B', new DifficultyListener()));
+        diffItems.add(itemFactory.createItem(JRadioButtonMenuItem.class, "Intermediate", 'I', new DifficultyListener()));
+        diffItems.add(itemFactory.createItem(JRadioButtonMenuItem.class, "Expert", 'E', new DifficultyListener()));
+        diffItems.add(itemFactory.createItem(JRadioButtonMenuItem.class, "Custom...", 'C',new DifficultyListener()));
 
-        //Create a button group and add the difficulty items to it
+        // Create a button group and add the difficulty items to it
         ButtonGroup difficultyGroup = new ButtonGroup();
-        difficultyGroup.add(beginnerItem);
-        difficultyGroup.add(intermediateItem);
-        difficultyGroup.add(expertItem);
-        difficultyGroup.add(customItem);
+        for (JMenuItem difficultyItem: diffItems) {
+            difficultyGroup.add(difficultyItem);
+        }
 
-        //Add difficulty and view items to viewMenu
-        viewMenu.add(newGameItem);
-        viewMenu.add(pauseItem);
-        viewMenu.addSeparator();
-        viewMenu.add(beginnerItem);
-        viewMenu.add(intermediateItem);
-        viewMenu.add(expertItem);
-        viewMenu.add(customItem);
+        // Add difficulty and view items to viewMenu
+        viewItems.add(null);
+        itemFactory.addItems(viewMenu, viewItems);
+        itemFactory.addItems(viewMenu, diffItems);
 
         //Create the helpMenu and it's item
-        helpMenu = new JMenu("Help");
-        helpMenu.setMnemonic('H');
+        helpMenu = (JMenu) itemFactory.createItem(JMenu.class, "Help", 'H');
 
-        resolveItem = new JMenuItem("Solve Game");
-        resolveItem.setMnemonic('c');
-        resolveItem.addActionListener(new ResolveListener());
+        helpItems.add(itemFactory.createItem(JMenuItem.class, "Solve Game", 'c', new ResolveListener()));
 
         //Add help item to helpMenu
-        helpMenu.add(resolveItem);
+        itemFactory.addItems(helpMenu, helpItems);
 
         //Add File, View and Help Menus to the JMenuBar
         menuBar.add(fileMenu);
@@ -202,14 +182,6 @@ public class  MineFrame
 
         // return the menuBar
         return menuBar;
-    }
-
-    // JRadioButton Item creator
-    private JRadioButtonMenuItem createRadioButtonItem(String title, char mnemonics, ActionListener l) {
-        JRadioButtonMenuItem item = new JRadioButtonMenuItem(title);
-        item.setMnemonic(mnemonics);
-        item.addActionListener(l);
-        return item;
     }
 
     //Accessor for the number of mines
@@ -302,7 +274,7 @@ public class  MineFrame
         }
     }
     
-    public class newGameListener implements ActionListener
+    public class NewGameListener implements ActionListener
     {
         //Create a newGame after user agrees
         public void actionPerformed(ActionEvent e)
