@@ -86,7 +86,7 @@ public class HighscoreListener implements ActionListener
                 //Get the initial values from the TextAreas
                 String nameValue = name.getText();
                 String scoreValue = score.getText();
-                String difficulyValue = diff.getText();
+                String diffText = diff.getText();
 
                 //Initialise 2 index values
                 int index = 0;
@@ -102,7 +102,7 @@ public class HighscoreListener implements ActionListener
                         index = line.indexOf(':');//Search through the line for ":" and return the index
                         index2 = line.indexOf(':', index + 1);//Search through the line for the 2nd ":" and return the index
                         nameValue += line.substring(0, index) + "\n";//Grab the before first ":" and add it to nameValue
-                        difficulyValue += line.substring(index + 1, index2) + "\n";//Grab the string between the ":"s and add it to difficulyValue
+                        diffText += line.substring(index + 1, index2) + "\n";//Grab the string between the ":"s and add it to diffText
                         scoreValue += line.substring(index2 + 1, line.length()) + "\n";//Grab the String after the 2nd ":" and add it to scoreValue
                     }
                     catch (IndexOutOfBoundsException e)//Exception handeling
@@ -114,7 +114,7 @@ public class HighscoreListener implements ActionListener
                 }
 
                 name.setText(nameValue);//Set to the new values
-                diff.setText(difficulyValue);//Set to the new values
+                diff.setText(diffText);//Set to the new values
                 score.setText(scoreValue);//Set to the new values
 
                 //close scanner

@@ -115,16 +115,21 @@ public class CustomGameListener implements ActionListener
         }
     }
 
-    //Change Listeners
+    private int panelChangedHelper(ChangeEvent e, int originalValue) {
+        JSlider source = (JSlider) e.getSource();
+        if (!source.getValueIsAdjusting())//check that the user has finished moving the slider
+        {
+            return source.getValue(); // set the value from the slider
+        }
+        return originalValue;
+    }
+
+    // Change Listeners
     class noOfMinesListener implements ChangeListener
     {
         public void stateChanged(ChangeEvent e)
         {
-            JSlider source = (JSlider) e.getSource();
-            if (!source.getValueIsAdjusting())//check that the user has finished moving the slider
-            {
-                minesCount = source.getValue();//set the value from the slider to minesCount
-            }
+            minesCount = panelChangedHelper(e, minesCount);
         }
     }
 
@@ -132,11 +137,7 @@ public class CustomGameListener implements ActionListener
     {
         public void stateChanged(ChangeEvent e)
         {
-            JSlider source = (JSlider) e.getSource();
-            if (!source.getValueIsAdjusting())//check that the user has finished moving the slider
-            {
-                width = source.getValue();//set the value from the slider to width
-            }
+            width = panelChangedHelper(e, width);
         }
     }
 
@@ -144,11 +145,7 @@ public class CustomGameListener implements ActionListener
     {
         public void stateChanged(ChangeEvent e)
         {
-            JSlider source = (JSlider) e.getSource();
-            if (!source.getValueIsAdjusting())//check that the user has finished moving the slider
-            {
-                height = source.getValue();//set the value from the slider to height
-            }
+            height = panelChangedHelper(e, height);
         }
     }
 

@@ -153,7 +153,7 @@ public class  MineFrame
         diffItems.add(itemFactory.createItem(JRadioButtonMenuItem.class, "Beginner", 'B', new DifficultyListener()));
         diffItems.add(itemFactory.createItem(JRadioButtonMenuItem.class, "Intermediate", 'I', new DifficultyListener()));
         diffItems.add(itemFactory.createItem(JRadioButtonMenuItem.class, "Expert", 'E', new DifficultyListener()));
-        diffItems.add(itemFactory.createItem(JRadioButtonMenuItem.class, "Custom...", 'C',new DifficultyListener()));
+        diffItems.add(itemFactory.createItem(JRadioButtonMenuItem.class, "Custom...", 'C', new CustomGameListener()));
 
         // Create a button group and add the difficulty items to it
         ButtonGroup difficultyGroup = new ButtonGroup();
