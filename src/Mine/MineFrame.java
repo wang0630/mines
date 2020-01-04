@@ -34,7 +34,7 @@ public class MineFrame
 
     //Declare GUI objects
     public static JFrame frame;
-    private static JPanel gamePanel;
+    public static JPanel gamePanel;
     private static JLabel statusbar;
 
     //Generic int[] stacks
@@ -59,7 +59,7 @@ public class MineFrame
     //Declare the menu bar and its items (GUI elements)
     private JMenuBar menuBar = new JMenuBar();
     private JMenu fileMenu, editMenu, viewMenu, helpMenu;
-    private static JMenuItem pauseItem;
+    public static JMenuItem pauseItem;
     // Array to hold different items for different menus
     private ArrayList<JMenuItem> fileItems = new ArrayList<JMenuItem>();
     private ArrayList<JMenuItem> editItems = new ArrayList<JMenuItem>();
@@ -127,25 +127,25 @@ public class MineFrame
         fileMenu = (JMenu) itemFactory.createItem(JMenu.class, "File", 'F');
         // Push items to the array
         fileItems.add(itemFactory.createItem(JMenuItem.class, "Save", 'S', new SaveListener()));
-        fileItems.add(itemFactory.createItem(JMenuItem.class, "Load", 'L', new LoadListener()));
+        fileItems.add(itemFactory.createItem(JMenuItem.class, "Load", 'L', new Listeners.LoadListener()));
         fileItems.add(null);
         fileItems.add(itemFactory.createItem(JMenuItem.class, "HighScore", 'H', new HighscoreListener()));
-        fileItems.add(itemFactory.createItem(JMenuItem.class, "Exit", 'X', new ExitListener()));
+        fileItems.add(itemFactory.createItem(JMenuItem.class, "Exit", 'X', new Listeners.ExitListener()));
 
         // Add file items to the fileMenu
         itemFactory.addItems(fileMenu, fileItems);
 
         //Create the editMenu and it's items
         editMenu = (JMenu) itemFactory.createItem(JMenu.class, "Edit", 'd');
-        editItems.add(itemFactory.createItem(JMenuItem.class, "Undo", 'Z', new UndoListener()));
-        editItems.add(itemFactory.createItem(JMenuItem.class, "Redo", 'Y', new RedoListener()));
+        editItems.add(itemFactory.createItem(JMenuItem.class, "Undo", 'Z', new Listeners.UndoListener()));
+        editItems.add(itemFactory.createItem(JMenuItem.class, "Redo", 'Y', new Listeners.RedoListener()));
 
         // Add edit items to the editMenu
         itemFactory.addItems(editMenu, editItems);
 
         // Create the viewMenu and it's items
         viewMenu = (JMenu) itemFactory.createItem(JMenu.class, "Game", 'G');
-        pauseItem = itemFactory.createItem(JMenuItem.class, "Pause", 'P', new PauseListener());
+        pauseItem = itemFactory.createItem(JMenuItem.class, "Pause", 'P', new Listeners.PauseListener());
         viewItems.add(pauseItem);
         viewItems.add(itemFactory.createItem(JMenuItem.class, "New Game", 'N', new Listeners.NewGameListener()));
         // Create difficulty radio buttons
@@ -260,126 +260,5 @@ public class MineFrame
     public static void calcDimentions() {
     	width = noOfCols*15;
     	height = noOfRows*15+20;
-    }
-
-    /******** Listeners **********/
-
-    private class RedoListener implements ActionListener
-    {
-        
-        //Method that pushes the current redo to the undoStack and pops the redoStack to the (mine-) field
-        public void actionPerformed(ActionEvent e)
-        {
-            if (!redoStack.empty())//Check if the undoStack is empty
-            {
-                undoStack.push(redoStack.peek());//Return the item to the undo stack
-                Board.setField(redoStack.pop());//Make the field equal to the item and remove it from the stack
-                gamePanel.repaint();//Repaint the frame
-            }
-        }
-    }
-
-    private class UndoListener implements ActionListener
-    {
-        
-        //Method that pushes the current undo to the redoStack and pops the undoStack to the (mine-) field
-        public void actionPerformed(ActionEvent e)
-            {
-            if (!undoStack.empty())//Check if the undoStack is empty
-            {
-                redoStack.push(undoStack.pop());//Push the first element of undoStack to redoStack and remove current field
-                if (!undoStack.empty())
-                {
-                	Board.setField(undoStack.pop());//Make the board equal to the next element in undoStack
-                	Board.pushFieldToUndoStack();//Push the new current frame into stack
-                	gamePanel.repaint();//Repaint the frame
-                }
-                else if(!redoStack.empty())
-                {
-                	undoStack.push(redoStack.pop());//Return the item to the undo stack
-                }
-            }
-        }
-    }
-
-    public class LoadListener implements ActionListener
-    {
-        //Initialise fileChooser
-        private JFileChooser fileChooser = new JFileChooser();
-
-        
-        //Open a FileChooser, read the selected file into an array, override the (mine-) field with the array and repaint
-        public void actionPerformed(ActionEvent e)
-        {
-            //Initialise new Panel for the File chooser
-            class FileChooserPanel extends JPanel
-            {
-                public FileChooserPanel()
-                {
-                }
-            }
-            FileChooserPanel fileChooserPanel = new FileChooserPanel();//Create a new FileChooserPanel
-            int returnVal = fileChooser.showOpenDialog(fileChooserPanel);//Handle open button action
-
-            if (returnVal == JFileChooser.APPROVE_OPTION)//Run the following code if the user opens a file
-            {
-                File file = fileChooser.getSelectedFile();//Set the file to the one selected by the user
-
-                try
-                {
-                    Scanner scan = new Scanner(file);
-
-                    int n = 0;//Initialise n
-                    while (scan.hasNext())
-                    {
-                        n += 1;//Get the length of the array/file
-                        scan.next();
-                    }
-                    scan.close();//Close scanner
-
-                    scan = new Scanner(file);//Reopen Scanner
-
-                    int[] arr = new int[n];//Initialise array
-                    try
-                    {
-                        //Fill the array with the data from the file
-                        for (int i = 0; i < arr.length; i++)
-                        {
-                            arr[i] = scan.nextInt();
-                        }
-                    }
-                    catch (InputMismatchException ex)//Exception handling
-                    {
-                        JOptionPane.showMessageDialog(null, "This file is not supported!");//Give user notification of exception
-                    }
-                    scan.close();//Close Scanner
-                    scan = null;//Garbage collection
-                    Board.setField(arr);//Set arr to field
-                    frame.repaint();//Repaint
-                }
-                catch (FileNotFoundException ex)//Handle file not found exception
-                {
-                    ex.printStackTrace();
-                }
-
-            }
-        }
-    }
-
-    //Method to handle pausing the game
-    public static class PauseListener implements ActionListener
-    {
-        public void actionPerformed(ActionEvent e)
-        {
-            timePause();
-            playingGame = pauseItem.isSelected() ? false : true;
-        }
-    }
-    public class ExitListener implements ActionListener {
-
-    	public void actionPerformed(ActionEvent e) {
-    		//Quit the program
-    		System.exit(0);
-    	}
     }
 }
