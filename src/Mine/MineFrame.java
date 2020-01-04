@@ -10,7 +10,6 @@ import java.io.FileNotFoundException;
 import java.util.*;
 
 import javax.swing.ButtonGroup;
-import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -24,16 +23,17 @@ import javax.swing.JRadioButtonMenuItem;
 import CustomGameListener.CustomGameListener;
 import Level.*;
 import Mine.ItemFactory.ItemFactory;
+import Mine.Listeners.Listeners;
 import Save.*;
 
-public class  MineFrame
+public class MineFrame
 {
     //time the game was paused for
     private static double pauseTime = 0.0;
     private static double startPauseTime = 0;
 
     //Declare GUI objects
-    private static JFrame frame;
+    public static JFrame frame;
     private static JPanel gamePanel;
     private static JLabel statusbar;
 
@@ -68,7 +68,7 @@ public class  MineFrame
     private ArrayList<JMenuItem> helpItems = new ArrayList<JMenuItem>();
 
     // The map for mapping e.getActionCommand() to according level
-    private HashMap<String, Level> difficultyMap = new HashMap<String, Level>();
+    public static HashMap<String, Level> difficultyMap = new HashMap<String, Level>();
 
     public MineFrame()
     {
@@ -118,7 +118,7 @@ public class  MineFrame
         frame.pack();
     }
 
-    //Method to create the MenuBar, its properties and associate Action Listners
+    //Method to create the MenuBar, its properties and associate Action Listeners
     private JMenuBar buildMenuBar()
     {
         ItemFactory itemFactory = new ItemFactory();
@@ -147,12 +147,11 @@ public class  MineFrame
         viewMenu = (JMenu) itemFactory.createItem(JMenu.class, "Game", 'G');
         pauseItem = itemFactory.createItem(JMenuItem.class, "Pause", 'P', new PauseListener());
         viewItems.add(pauseItem);
-        viewItems.add(itemFactory.createItem(JMenuItem.class, "New Game", 'N', new NewGameListener()));
-
+        viewItems.add(itemFactory.createItem(JMenuItem.class, "New Game", 'N', new Listeners.NewGameListener()));
         // Create difficulty radio buttons
-        diffItems.add(itemFactory.createItem(JRadioButtonMenuItem.class, "Beginner", 'B', new DifficultyListener()));
-        diffItems.add(itemFactory.createItem(JRadioButtonMenuItem.class, "Intermediate", 'I', new DifficultyListener()));
-        diffItems.add(itemFactory.createItem(JRadioButtonMenuItem.class, "Expert", 'E', new DifficultyListener()));
+        diffItems.add(itemFactory.createItem(JRadioButtonMenuItem.class, "Beginner", 'B', new Listeners.DifficultyListener()));
+        diffItems.add(itemFactory.createItem(JRadioButtonMenuItem.class, "Intermediate", 'I', new Listeners.DifficultyListener()));
+        diffItems.add(itemFactory.createItem(JRadioButtonMenuItem.class, "Expert", 'E', new Listeners.DifficultyListener()));
         diffItems.add(itemFactory.createItem(JRadioButtonMenuItem.class, "Custom...", 'C', new CustomGameListener()));
 
         // Create a button group and add the difficulty items to it
@@ -169,7 +168,7 @@ public class  MineFrame
         //Create the helpMenu and it's item
         helpMenu = (JMenu) itemFactory.createItem(JMenu.class, "Help", 'H');
 
-        helpItems.add(itemFactory.createItem(JMenuItem.class, "Solve Game", 'c', new ResolveListener()));
+        helpItems.add(itemFactory.createItem(JMenuItem.class, "Solve Game", 'c', new Listeners.ResolveListener()));
 
         //Add help item to helpMenu
         itemFactory.addItems(helpMenu, helpItems);
@@ -265,55 +264,6 @@ public class  MineFrame
 
     /******** Listeners **********/
 
-    //Class to handle the game difficulty changes
-    private class DifficultyListener implements ActionListener
-    {
-        public void actionPerformed(ActionEvent e)
-        {
-            difficultyMap.get(e.getActionCommand()).runLevel();
-        }
-    }
-    
-    public class NewGameListener implements ActionListener
-    {
-        //Create a newGame after user agrees
-        public void actionPerformed(ActionEvent e)
-        {
-            int ask = JOptionPane.showConfirmDialog(null, "Are you sure?");
-            if (ask == 0)
-            {
-                MineFrame.startNewGame();
-            }
-        }
-    }
-
-    //Method to rotate through all field cells to solve the board
-    private class ResolveListener implements ActionListener
-    {
-        public void actionPerformed(ActionEvent arg0)
-        {
-            for (int cCol = 0; cCol < MineFrame.getNoOfCols(); cCol++)
-            {
-                for (int cRow = 0; cRow < MineFrame.getNoOfRows(); cRow++)
-                {
-                    //Checks that the square hasn't already been uncovered by the user
-                    if (Board.getField()[(cRow * MineFrame.getNoOfCols()) + cCol] >= 10 && Board.getField()[(cRow * MineFrame.getNoOfCols()) + cCol] != 20)
-                    {
-                        Board.getField()[(cRow * MineFrame.getNoOfCols()) + cCol] -= Board.COVER_FOR_CELL;//Remove the covers for all cells
-
-                        if (Board.getField()[(cRow * MineFrame.getNoOfCols()) + cCol] == 9)//Check if a cell is a mine
-                        {
-                            Board.getField()[(cRow * MineFrame.getNoOfCols()) + cCol] += 11;//Turn mine cells into a marked mine cell
-                        }
-                    }
-                }
-            }
-            Board.setSolved(true);
-            Board.setInGame(false);
-            frame.repaint();//Repaint the frame to show the resolved board
-        }
-    }
-
     private class RedoListener implements ActionListener
     {
         
@@ -334,7 +284,7 @@ public class  MineFrame
         
         //Method that pushes the current undo to the redoStack and pops the undoStack to the (mine-) field
         public void actionPerformed(ActionEvent e)
-        {
+            {
             if (!undoStack.empty())//Check if the undoStack is empty
             {
                 redoStack.push(undoStack.pop());//Push the first element of undoStack to redoStack and remove current field

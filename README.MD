@@ -90,3 +90,8 @@ Inside `ItemFactory.createItem()`, there are a couple of things worth mentioning
 2. `Class.getConstructor(String.class)` is used to fetch the constructor which accepts a string as argument
 3. We use the constructor to create the UI and upcast the type into `JMenuItem`, since we know `JMenu`, `JMenuItem` and `JRadioButtonMenuItem` are all sub classes of `JMenuItem`
 4. After setting the title, mnemonic and listener(if any), we return it
+
+
+### 01/05: Put listeners to a separate class
+The original listeners for all buttons are located in class `MineFrame`, making it very long and hard to maintain. In order to improve it, I move all listeners to a public class called
+ `Listeners`, which contains actual listeners class. Note that all listeners are `public static` since we want to refer to them inside class `MineFrame`.
