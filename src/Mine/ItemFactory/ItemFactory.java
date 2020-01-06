@@ -1,5 +1,7 @@
 package Mine.ItemFactory;
 
+import org.jetbrains.annotations.NotNull;
+
 import javax.swing.*;
 import java.awt.event.ActionListener;
 import java.lang.reflect.Constructor;
@@ -7,22 +9,22 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
 public class ItemFactory {
-    public JMenuItem createItem(Class cls, String title, char m, ActionListener... l) {
+    // ? means wildcard, extends JMenuItem mean matches type JMenuItem or any of its subclasses
+    // We have JMenu, JMenuItem, so we want the upper bound is JMenuItem
+    public JMenuItem createItem(Class<? extends JMenuItem> cls, String title, char m, ActionListener... l) {
         try {
-            Constructor c = cls.getConstructor(String.class);
-            JMenuItem item = (JMenuItem) c.newInstance(title);
+            Constructor<? extends JMenuItem> c = cls.getConstructor(String.class);
+            JMenuItem item = c.newInstance(title);
             item.setMnemonic(m);
-            if (l.length > 0) {
-                item.addActionListener(l[0]);
+            for (ActionListener li : l) {
+                item.addActionListener(li);
             }
             return item;
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
+        } catch (NoSuchMethodException | IllegalAccessException
+                | InstantiationException | InvocationTargetException e) {
+            JOptionPane.showConfirmDialog(null,
+                    "Exception", "Exception", JOptionPane.DEFAULT_OPTION);
+            System.exit(0);
             e.printStackTrace();
         }
         return null;
